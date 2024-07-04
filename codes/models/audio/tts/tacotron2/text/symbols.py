@@ -10,9 +10,13 @@ _pad        = '_'
 _punctuation = '!\'(),.:;? '
 _special = '-'
 _letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+_bengali_letters = 'অআইঈউঊঋএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়'
+_bengali_numerals = '০১২৩৪৫৬৭৮৯'
+_bengali_punctuation = '।॥'
+_bengali_diacritics = 'ািীুূৃেৈোৌ্'
 
 # Prepend "@" to ARPAbet symbols to ensure uniqueness (some are the same as uppercase letters):
 _arpabet = ['@' + s for s in cmudict.valid_symbols]
 
 # Export all symbols:
-symbols = [_pad] + list(_special) + list(_punctuation) + list(_letters) + _arpabet
+symbols = [_pad] + list(_special) + list(_punctuation) + list(_letters) + list(_bengali_letters) + list(_bengali_numerals) + list(_bengali_punctuation) + list(_bengali_diacritics) + _arpabet
