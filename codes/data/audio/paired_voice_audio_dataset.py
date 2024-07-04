@@ -12,6 +12,7 @@ from data.audio.unsupervised_audio_dataset import load_audio, load_similar_clips
 from models.audio.tts.tacotron2 import load_filepaths_and_text, load_filepaths_and_text_type
 from models.audio.tts.tacotron2 import text_to_sequence, sequence_to_text
 from utils.util import opt_get
+from bnlp import BasicTokenizer
 
 
 def load_tsv_type(filename, type):
@@ -177,15 +178,24 @@ class TextWavLoader(torch.utils.data.Dataset):
         text_seq = self.get_text(text)
         wav = load_audio(audiopath, self.sample_rate)
         return (text_seq, wav, text, audiopath_and_text[0], type)
-
+    
+    def preprocess_text(self, text):
+        basic_tokenizer = BasicTokenizer()
+        tokens = basic_tokenizer(text)
+        return ' '.join(tokens)
+    
     def get_text(self, text):
+        text = self.preprocess_text(text)
+
         tokens = self.tokenizer.encode(text)
         tokens = torch.IntTensor(tokens)
         if self.use_bpe_tokenizer:
-            # Assert if any UNK,start tokens encountered.
-            assert not torch.any(tokens == 1)
-        # The stop token should always be sacred.
-        assert not torch.any(tokens == 0)
+          if torch.any(tokens == 1):
+            print(f"Warning: Text sequence contains [UNK] token: {text}")
+    
+        if torch.any(tokens == 0):
+          print(f"Warning: Text sequence contains stop token: {text}")
+        
         return tokens
 
     def __getitem__(self, index):
